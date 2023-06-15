@@ -7,8 +7,16 @@
 
 import Foundation
 
-
-class Market {
-    let marketName:String = "SMI"
-    var quotes:[Quote]? = []
+class Market: Decodable {
+    let marketName: String = "SMI"
+    var quotes: [Quote]? = []
+    
+    enum CodingKeys: CodingKey {
+        case quotes
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.quotes = try container.decodeIfPresent([Quote].self, forKey: .quotes)
+    }
 }

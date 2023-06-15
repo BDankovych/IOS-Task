@@ -9,7 +9,7 @@ import UIKit
 
 class QuoteDetailsViewController: UIViewController {
     
-    private var quote:Quote? = nil
+    private var quote: Quote? = nil
     
     let symbolLabel = UILabel()
     let nameLabel = UILabel()
@@ -21,7 +21,7 @@ class QuoteDetailsViewController: UIViewController {
     
     
     
-    init(quote:Quote) {
+    init(quote: Quote) {
         super.init(nibName: nil, bundle: nil)
         self.quote = quote
     }
