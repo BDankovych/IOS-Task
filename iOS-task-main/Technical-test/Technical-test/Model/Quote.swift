@@ -14,5 +14,14 @@ struct Quote: Decodable {
     var readableLastChangePercent: String?
     var last: String?
     var variationColor: String?
-    var myMarket: Market?
+}
+
+extension Quote: Equatable {
+    var id: String {
+        (symbol ?? "") + "_" + (name ?? "") + "_" + (currency ?? "")
+    }
+    
+    static func == (lhs: Quote, rhs: Quote) -> Bool {
+        lhs.id == rhs.id
+    }
 }

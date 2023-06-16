@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol QuotesListCellDelegate: AnyObject {
+    func changeQuoteState(quoteID: String, isFavorite: Bool)
+}
+
 class QuotesListCell: UITableViewCell {
     // UI
     @IBOutlet private var nameLabel: UILabel!
@@ -15,16 +19,19 @@ class QuotesListCell: UITableViewCell {
     @IBOutlet private var isFacoriteButton: UIButton!
     
     // Data
-    private var quote: Quote!
+    private var quote: QuotesListCellDTO!
+    
+    // Delegate
+    weak var delegate: QuotesListCellDelegate?
     
     override func prepareForReuse() {
         nameLabel.text = ""
         lastCurrencyLabel.text = ""
         readableLastChangePercentLabel.text = ""
-        isFacoriteButton.setImage(UIImage(systemName: "no-favorite"), for: .normal)
+        isFacoriteButton.setImage(UIImage(named: "no-favorite"), for: .normal)
     }
     
-    func configure(model: Quote) {
+    func configure(model: QuotesListCellDTO) {
         self.quote = model
         nameLabel.text = quote.name ?? "--"
         if let last = quote.last, let currency = quote.currency {
@@ -40,6 +47,15 @@ class QuotesListCell: UITableViewCell {
             readableLastChangePercentLabel.text = "-- %"
             readableLastChangePercentLabel.textColor = .black
         }
+        
+        setupFavoriteButton()
+    }
+    
+    
+    //MARK: - private
+    private func setupFavoriteButton() {
+        let iconName = quote.isFavorite ? "favorite" : "no-favorite"
+        isFacoriteButton.setImage(UIImage(named: iconName), for: .normal)
     }
     
     private func getVariationColor(_ variation: String?) -> UIColor {
@@ -48,5 +64,12 @@ class QuotesListCell: UITableViewCell {
         case "green": return .green
         default: return .black
         }
+    }
+    
+    //MARK: - Actions
+    @IBAction func favoriteButtonPressed() {
+        quote.isFavorite.toggle()
+        delegate?.changeQuoteState(quoteID: quote.id, isFavorite: quote.isFavorite)
+        setupFavoriteButton()
     }
 }

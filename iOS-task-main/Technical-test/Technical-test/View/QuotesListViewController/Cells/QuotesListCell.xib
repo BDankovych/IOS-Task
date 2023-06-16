@@ -47,6 +47,9 @@
                         </constraints>
                         <state key="normal" title="Button"/>
                         <buttonConfiguration key="configuration" style="plain" image="no-favorite"/>
+                        <connections>
+                            <action selector="favoriteButtonPressed" destination="yrG-Uy-K5t" eventType="touchUpInside" id="coT-hf-0qb"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
