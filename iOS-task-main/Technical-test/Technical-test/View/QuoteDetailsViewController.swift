@@ -9,7 +9,8 @@ import UIKit
 
 class QuoteDetailsViewController: UIViewController {
     
-    private var quote:Quote? = nil
+    private var quote: Quote? = nil
+    private var favoritesManager: FavoriteQuotesDataManagerProtocol? = nil
     
     let symbolLabel = UILabel()
     let nameLabel = UILabel()
@@ -19,11 +20,10 @@ class QuoteDetailsViewController: UIViewController {
     let favoriteButton = UIButton()
     
     
-    
-    
-    init(quote:Quote) {
+    init(quote: Quote, favoritesManager: FavoriteQuotesDataManagerProtocol? = nil) {
         super.init(nibName: nil, bundle: nil)
         self.quote = quote
+        self.favoritesManager = favoritesManager
     }
     
     required init?(coder: NSCoder) {
@@ -65,7 +65,7 @@ class QuoteDetailsViewController: UIViewController {
         readableLastChangePercentLabel.layer.borderColor = UIColor.black.cgColor
         readableLastChangePercentLabel.font = .systemFont(ofSize: 30)
         
-        favoriteButton.setTitle("Add to favorites", for: .normal)
+        setupFavoritesButton()
         favoriteButton.layer.cornerRadius = 6
         favoriteButton.layer.masksToBounds = true
         favoriteButton.layer.borderWidth = 3
@@ -121,14 +121,35 @@ class QuoteDetailsViewController: UIViewController {
                         
             favoriteButton.topAnchor.constraint(equalTo: readableLastChangePercentLabel.bottomAnchor, constant: 30),
             favoriteButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            favoriteButton.widthAnchor.constraint(equalToConstant: 150),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 220),
             favoriteButton.heightAnchor.constraint(equalToConstant: 44),
             
         ])
     }
     
+    private func setupFavoritesButton() {
+        favoriteButton.isHidden = false
+        guard let quote, let favoritesManager else {
+            favoriteButton.isHidden = true
+            return
+        }
+        
+        if favoritesManager.isFavorite(quote: quote) {
+            favoriteButton.setTitle("Remove from favorites", for: .normal)
+        } else {
+            favoriteButton.setTitle("Add to favorites", for: .normal)
+        }
+    }
     
     @objc func didPressFavoriteButton(_ sender:UIButton!) {
-        // TODO
+        guard let quote, let favoritesManager else { return }
+        
+        if favoritesManager.isFavorite(quote: quote) {
+            favoritesManager.remove(quote: quote)
+        } else {
+            favoritesManager.add(quote: quote)
+        }
+        
+        setupFavoritesButton()
     }
 }
